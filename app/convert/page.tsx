@@ -19,6 +19,7 @@ export default function ConvertPage() {
   const [showCopiedFeedback, setShowCopiedFeedback] = useState(false);
   const [appState, setAppState] = useState<AppState>('upload');
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [individualCopyFeedback, setIndividualCopyFeedback] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -100,6 +101,17 @@ export default function ConvertPage() {
       setTimeout(() => setShowCopiedFeedback(false), 2000);
     } catch (err) {
       console.error("Failed to copy to clipboard:", err);
+    }
+  };
+
+  const handleCopyIndividualNote = async (note: Note, index: number) => {
+    try {
+      const noteText = `${note.title}\n${note.content}`;
+      await navigator.clipboard.writeText(noteText);
+      setIndividualCopyFeedback(index);
+      setTimeout(() => setIndividualCopyFeedback(null), 2000);
+    } catch (err) {
+      console.error("Failed to copy note to clipboard:", err);
     }
   };
 
@@ -328,9 +340,28 @@ export default function ConvertPage() {
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-lg font-medium text-slate-800">{note.title}</h3>
-                  <span className="text-xs text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
-                    {selectedFiles[index]?.name || 'Unknown file'}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+                      {selectedFiles[index]?.name || 'Unknown file'}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleCopyIndividualNote(note, index)}
+                      className="text-slate-500 hover:text-slate-700 hover:bg-slate-100 h-8 px-3 rounded-lg text-xs"
+                    >
+                      {individualCopyFeedback === index ? (
+                        <span className="text-emerald-600 font-medium">Copied!</span>
+                      ) : (
+                        <>
+                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                          Copy
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </div>
               </div>
               <Textarea
