@@ -18,6 +18,7 @@ export default function ConvertPage() {
   const [error, setError] = useState<string>("");
   const [showCopiedFeedback, setShowCopiedFeedback] = useState(false);
   const [appState, setAppState] = useState<AppState>('upload');
+  const [showInfoModal, setShowInfoModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,6 +127,20 @@ export default function ConvertPage() {
         </div>
         <h1 className="text-4xl font-light text-slate-800">Note Translator</h1>
         <p className="text-lg text-slate-600 max-w-md mx-auto">Upload your handwritten notes and let AI convert them to digital text</p>
+        
+        <div className="pt-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowInfoModal(true)}
+            className="text-slate-500 hover:text-slate-700 hover:bg-slate-100/50 px-4 py-2 rounded-xl transition-all duration-200 text-sm"
+          >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Why This App Exists
+          </Button>
+        </div>
       </div>
 
       <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-xl rounded-3xl overflow-hidden">
@@ -344,6 +359,48 @@ export default function ConvertPage() {
     </div>
   );
 
+  const renderInfoModal = () => (
+    <div className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 transition-opacity duration-300 ${showInfoModal ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+      <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto transform transition-transform duration-300 scale-100">
+        <div className="p-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-medium text-slate-800">Why This App Exists</h2>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowInfoModal(false)}
+              className="text-slate-400 hover:text-slate-600 hover:bg-slate-100 h-8 w-8 p-0 rounded-lg"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </Button>
+          </div>
+          
+          <div className="space-y-4 text-slate-600">
+            <p className="text-lg leading-relaxed">
+              Hey :P, I made this app because I like to take notes in a handwritten style.
+              But I also sometimes find it hard to read my own handwriting, and keeping track of my notes.
+              Using this I can upload it to something like obsidian or a google doc.
+              I think getting your thoughts down on paper (or any form of writing) is the best way to get your ideas and thoughts out there.
+              Enjoy!
+            </p>
+
+          </div>
+          
+          <div className="mt-8 pt-6 border-t border-slate-200">
+            <Button
+              onClick={() => setShowInfoModal(false)}
+              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              Got it, thanks!
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6">
       <div className="max-w-4xl mx-auto">
@@ -353,6 +410,8 @@ export default function ConvertPage() {
           {appState === 'results' && renderResultsScreen()}
         </div>
       </div>
+      
+      {renderInfoModal()}
     </div>
   );
 }
